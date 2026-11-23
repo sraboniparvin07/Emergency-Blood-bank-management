@@ -256,6 +256,61 @@ void bfs(int source)
     }
 }
 
+// Prim's Minimum Spanning Tree
+void prim()
+{
+    bool visited[N] = {false};
+
+    int totalCost = 0;
+    int edges = 0;
+
+    visited[0] = true;
+
+    cout << "\n===== MINIMUM NETWORK CONNECTIONS =====\n";
+
+    while (edges < N - 1)
+    {
+        int minimum = INT_MAX;
+        int u = -1, v = -1;
+
+        for (int i = 0; i < N; i++)
+        {
+            if (visited[i])
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (!visited[j] &&
+                        graph[i][j] > 0 &&
+                        graph[i][j] < minimum)
+                    {
+                        minimum = graph[i][j];
+                        u = i;
+                        v = j;
+                    }
+                }
+            }
+        }
+
+        if (u == -1)
+        {
+            cout << "Network is disconnected!\n";
+            return;
+        }
+
+        cout << locations[u] << " - "
+             << locations[v] << " : "
+             << minimum << " km\n";
+
+        visited[v] = true;
+
+        totalCost += minimum;
+        edges++;
+    }
+
+    cout << "\nTotal Network Cost: "
+         << totalCost << " km\n";
+}
+
 int main()
 {
     int choice;
@@ -269,7 +324,8 @@ int main()
         cout << "\n1. Request Blood and Find Nearest Blood Bank";
         cout << "\n2. Show Reachable Locations (BFS)";
         cout << "\n3. Show Blood Bank Stock";
-        cout << "\n4. Exit";
+        cout << "\n4. View Minimum Network Connections";
+        cout << "\n5. Exit";
 
         cout << "\n\nEnter your choice: ";
 
@@ -307,6 +363,10 @@ int main()
                 break;
 
             case 4:
+                prim();
+                break;
+
+            case 5:
                 cout << "\nProgram ended.\n";
                 break;
 
@@ -314,7 +374,7 @@ int main()
                 cout << "\nInvalid choice!\n";
         }
 
-    } while (choice != 4);
+    } while (choice != 5);
 
     return 0;
 }
