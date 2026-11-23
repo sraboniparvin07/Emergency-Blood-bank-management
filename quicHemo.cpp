@@ -226,6 +226,36 @@ void bloodRequest()
          << stock[selectedBank][group] << " units\n";
 }
 
+// BFS Algorithm
+void bfs(int source)
+{
+    bool visited[N] = {false};
+
+    queue<int> q;
+
+    visited[source] = true;
+    q.push(source);
+
+    cout << "\n===== REACHABLE LOCATIONS =====\n";
+
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+
+        cout << locations[u] << endl;
+
+        for (int v = 0; v < N; v++)
+        {
+            if (graph[u][v] > 0 && !visited[v])
+            {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+}
+
 int main()
 {
     int choice;
@@ -233,12 +263,13 @@ int main()
     do
     {
         cout << "\n\n============================================";
-        cout << "\n       EMERGENCY BLOOD BANK & HOSPITAL NETWORK";
+        cout << "\n   EMERGENCY BLOOD BANK & HOSPITAL NETWORK";
         cout << "\n============================================";
 
         cout << "\n1. Request Blood and Find Nearest Blood Bank";
-        cout << "\n2. Show Blood Bank Stock";
-        cout << "\n3. Exit";
+        cout << "\n2. Show Reachable Locations (BFS)";
+        cout << "\n3. Show Blood Bank Stock";
+        cout << "\n4. Exit";
 
         cout << "\n\nEnter your choice: ";
 
@@ -251,10 +282,31 @@ int main()
                 break;
 
             case 2:
+            {
+                showLocations();
+
+                int source;
+
+                cout << "\nEnter starting location number: ";
+                cin >> source;
+
+                if (source >= 0 && source < N)
+                {
+                    bfs(source);
+                }
+                else
+                {
+                    cout << "Invalid location!\n";
+                }
+
+                break;
+            }
+
+            case 3:
                 showStock();
                 break;
 
-            case 3:
+            case 4:
                 cout << "\nProgram ended.\n";
                 break;
 
@@ -262,7 +314,7 @@ int main()
                 cout << "\nInvalid choice!\n";
         }
 
-    } while (choice != 3);
+    } while (choice != 4);
 
     return 0;
 }
