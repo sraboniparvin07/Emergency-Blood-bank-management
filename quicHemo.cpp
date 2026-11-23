@@ -226,7 +226,6 @@ void bloodRequest()
          << stock[selectedBank][group] << " units\n";
 }
 
-// BFS Algorithm
 void bfs(int source)
 {
     bool visited[N] = {false};
@@ -236,7 +235,7 @@ void bfs(int source)
     visited[source] = true;
     q.push(source);
 
-    cout << "\n===== REACHABLE LOCATIONS =====\n";
+    cout << "\nReachable Locations:\n";
 
     while (!q.empty())
     {
@@ -256,21 +255,22 @@ void bfs(int source)
     }
 }
 
-// Prim's Minimum Spanning Tree
 void prim()
 {
     bool visited[N] = {false};
 
     int totalCost = 0;
+
     int edges = 0;
 
     visited[0] = true;
 
-    cout << "\n===== MINIMUM NETWORK CONNECTIONS =====\n";
+    cout << "\n===== PRIM'S MST =====\n";
 
     while (edges < N - 1)
     {
         int minimum = INT_MAX;
+
         int u = -1, v = -1;
 
         for (int i = 0; i < N; i++)
@@ -284,7 +284,9 @@ void prim()
                         graph[i][j] < minimum)
                     {
                         minimum = graph[i][j];
+
                         u = i;
+
                         v = j;
                     }
                 }
@@ -293,7 +295,7 @@ void prim()
 
         if (u == -1)
         {
-            cout << "Network is disconnected!\n";
+            cout << "Graph is disconnected!\n";
             return;
         }
 
@@ -304,7 +306,90 @@ void prim()
         visited[v] = true;
 
         totalCost += minimum;
+
         edges++;
+    }
+
+    cout << "\nTotal Network Cost: "
+         << totalCost << " km\n";
+}
+
+struct Edge
+{
+    int u, v, w;
+};
+
+int findParent(int parent[], int x)
+{
+    while (parent[x] != x)
+    {
+        x = parent[x];
+    }
+
+    return x;
+}
+
+void kruskal()
+{
+    vector<Edge> edges;
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = i + 1; j < N; j++)
+        {
+            if (graph[i][j] > 0)
+            {
+                edges.push_back({i, j, graph[i][j]});
+            }
+        }
+    }
+
+    sort(edges.begin(), edges.end(),
+         [](Edge a, Edge b)
+         {
+             return a.w < b.w;
+         });
+
+    int parent[N];
+
+    for (int i = 0; i < N; i++)
+    {
+        parent[i] = i;
+    }
+
+    int totalCost = 0;
+
+    int selected = 0;
+
+    cout << "\n===== KRUSKAL’S MST =====\n";
+
+    for (int i = 0; i < edges.size(); i++)
+    {
+        int u = findParent(parent, edges[i].u);
+
+        int v = findParent(parent, edges[i].v);
+
+        if (u != v)
+        {
+            cout << locations[edges[i].u] << " - "
+                 << locations[edges[i].v] << " : "
+                 << edges[i].w << " km\n";
+
+            parent[u] = v;
+
+            totalCost += edges[i].w;
+
+            selected++;
+        }
+
+        if (selected == N - 1)
+            break;
+    }
+
+    if (selected != N - 1)
+    {
+        cout << "Graph is disconnected!\n";
+        return;
     }
 
     cout << "\nTotal Network Cost: "
@@ -318,14 +403,20 @@ int main()
     do
     {
         cout << "\n\n============================================";
-        cout << "\n   EMERGENCY BLOOD BANK & HOSPITAL NETWORK";
+        cout << "\n EMERGENCY BLOOD BANK & HOSPITAL NETWORK";
         cout << "\n============================================";
 
         cout << "\n1. Request Blood and Find Nearest Blood Bank";
-        cout << "\n2. Show Reachable Locations (BFS)";
-        cout << "\n3. Show Blood Bank Stock";
-        cout << "\n4. View Minimum Network Connections";
-        cout << "\n5. Exit";
+
+        cout << "\n2. Show Reachable Locations";
+
+        cout << "\n3. View Optimal Distance(Meter)";
+
+        cout << "\n4. View Minimum Cost of the Distance(Meter)";
+
+        cout << "\n5. Show Blood Bank Stock";
+
+        cout << "\n6. Exit";
 
         cout << "\n\nEnter your choice: ";
 
@@ -344,6 +435,7 @@ int main()
                 int source;
 
                 cout << "\nEnter starting location number: ";
+
                 cin >> source;
 
                 if (source >= 0 && source < N)
@@ -359,14 +451,18 @@ int main()
             }
 
             case 3:
-                showStock();
-                break;
-
-            case 4:
                 prim();
                 break;
 
+            case 4:
+                kruskal();
+                break;
+
             case 5:
+                showStock();
+                break;
+
+            case 6:
                 cout << "\nProgram ended.\n";
                 break;
 
@@ -374,7 +470,7 @@ int main()
                 cout << "\nInvalid choice!\n";
         }
 
-    } while (choice != 5);
+    } while (choice != 6);
 
     return 0;
 }
